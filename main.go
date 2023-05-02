@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"net/http"
+
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
 )
 
 func handleFunc(w http.ResponseWriter, r *http.Request) {
@@ -35,34 +38,25 @@ func faqHandler(w http.ResponseWriter, r *http.Request) {
 `)
 }
 
-/*func pathHandler(w http.ResponseWriter, r *http.Request) {
-	switch r.URL.Path {
-	case "/":
-		handleFunc(w, r)
-	case "/contact":
-		contactHandler(w, r)
-	default:
-		http.Error(w, "Page not Found", http.StatusNotFound)
-	}
-}*/
+func galleriesByIdHandle(w http.ResponseWriter, r *http.Request) {
+	id := chi.URLParam(r, "id")
 
-type Router struct{}
+	ctx := r.Context()
+	key := ctx.Value("key").(string)
 
-func (Router) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	switch r.URL.Path {
-	case "/":
-		handleFunc(w, r)
-	case "/contact":
-		contactHandler(w, r)
-	case "/faq":
-		faqHandler(w, r)
-	default:
-		http.Error(w, "Page not Found", http.StatusNotFound)
-	}
+	fmt.Fprint(w, key+id)
 }
 
 func main() {
-	var router Router
+	r := chi.NewRouter()
+	r.Use(middleware.Logger)
+	r.Get("/", handleFunc)
+	r.Get("/contact", contactHandler)
+	r.Get("/faq", faqHandler)
+	r.Get("/galleries/{id}", galleriesByIdHandle)
+	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
+		http.Error(w, "Page not Found", http.StatusNotFound)
+	})
 	fmt.Println("Starting the server on 3000...")
-	http.ListenAndServe(":3000", router)
+	http.ListenAndServe(":3000", r)
 }
