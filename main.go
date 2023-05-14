@@ -2,59 +2,41 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"path/filepath"
+
+	"github.com/kisstc/lenslock/controllers"
 
 	"github.com/kisstc/lenslock/views"
 
 	"github.com/go-chi/chi/v5"
-	"github.com/go-chi/chi/v5/middleware"
 )
-
-func executeTemplate(w http.ResponseWriter, filepath string) {
-
-	t, err := views.Parse(filepath)
-	if err != nil {
-		log.Printf("parsing template: %v", err)
-		http.Error(w, "There was an error parsing the template", http.StatusInternalServerError)
-		return
-	}
-
-	t.Execute(w, nil)
-
-}
-
-func handleFunc(w http.ResponseWriter, r *http.Request) {
-	tplPath := filepath.Join("templates", "home.gohtml")
-	executeTemplate(w, tplPath)
-}
-
-func contactHandler(w http.ResponseWriter, r *http.Request) {
-	tplPath := filepath.Join("templates", "contact.gohtml")
-	executeTemplate(w, tplPath)
-}
-
-func faqHandler(w http.ResponseWriter, r *http.Request) {
-	executeTemplate(w, filepath.Join("templates", "faq.gohtml"))
-}
-
-func galleriesByIdHandle(w http.ResponseWriter, r *http.Request) {
-	id := chi.URLParam(r, "id")
-
-	ctx := r.Context()
-	key := ctx.Value("key").(string)
-
-	fmt.Fprint(w, key+id)
-}
 
 func main() {
 	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Get("/", handleFunc)
-	r.Get("/contact", contactHandler)
-	r.Get("/faq", faqHandler)
-	r.Get("/galleries/{id}", galleriesByIdHandle)
+
+	// parsing the templates for home page
+	tpl, err := views.Parse(filepath.Join("templates", "home.gohtml"))
+	if err != nil {
+		panic(err)
+	}
+	r.Get("/", controllers.StaticHandler(tpl))
+
+	// parsing the templates for contact page
+	tpl, err = views.Parse(filepath.Join("templates", "contact.gohtml"))
+	if err != nil {
+		panic(err)
+	}
+	r.Get("/contact", controllers.StaticHandler(tpl))
+
+	// parsing the templates for faq page
+	tpl, err = views.Parse(filepath.Join("templates", "faq.gohtml"))
+	if err != nil {
+		panic(err)
+	}
+	r.Get("/faq", controllers.StaticHandler(tpl))
+
+	// r.Use(middleware.Logger)
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Page not Found", http.StatusNotFound)
 	})
