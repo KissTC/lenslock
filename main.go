@@ -3,7 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"path/filepath"
+
+	"github.com/kisstc/lenslock/templates"
 
 	"github.com/kisstc/lenslock/controllers"
 
@@ -16,13 +17,13 @@ func main() {
 	r := chi.NewRouter()
 
 	// parsing the templates for home page
-	r.Get("/", controllers.StaticHandler(views.Must(views.Parse(filepath.Join("templates", "home.gohtml")))))
+	r.Get("/", controllers.StaticHandler(views.Must(views.ParseFS(templates.FS, "home.gohtml"))))
 
 	// parsing the templates for contact page
-	r.Get("/contact", controllers.StaticHandler(views.Must(views.Parse(filepath.Join("templates", "contact.gohtml")))))
+	r.Get("/contact", controllers.StaticHandler(views.Must(views.ParseFS(templates.FS, "contact.gohtml"))))
 
 	// parsing the templates for faq page
-	r.Get("/faq", controllers.StaticHandler(views.Must(views.Parse(filepath.Join("templates", "faq.gohtml")))))
+	r.Get("/faq", controllers.StaticHandler(views.Must(views.ParseFS(templates.FS, "faq.gohtml"))))
 
 	// r.Use(middleware.Logger)
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
