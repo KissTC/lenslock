@@ -4,10 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/kisstc/lenslock/templates"
-
 	"github.com/kisstc/lenslock/controllers"
-
+	"github.com/kisstc/lenslock/templates"
 	"github.com/kisstc/lenslock/views"
 
 	"github.com/go-chi/chi/v5"
