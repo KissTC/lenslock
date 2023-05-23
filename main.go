@@ -31,6 +31,7 @@ func main() {
 		templates.FS, "signup.gohtml", "tailwind.gohtml",
 	))
 	r.Get("/signup", usersC.New)
+	r.Post("/users", usersC.Create)
 
 	// r.Use(middleware.Logger)
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
