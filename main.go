@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/kisstc/lenslock/controllers"
+	"github.com/kisstc/lenslock/models"
 	"github.com/kisstc/lenslock/templates"
 	"github.com/kisstc/lenslock/views"
 
@@ -25,8 +26,19 @@ func main() {
 		templates.FS, "faq.gohtml", "tailwind.gohtml",
 	))))
 
+	cfg := models.DefaultPostgresConfig()
+	db, err := models.Open(cfg)
+	if err != nil {
+		panic(err)
+	}
+	defer db.Close()
+	userService := models.UserService{
+		DB: db,
+	}
 	// parsing the templates for signup page
-	usersC := controllers.Users{}
+	usersC := controllers.Users{
+		UserService: &userService,
+	}
 	usersC.Templates.New = views.Must(views.ParseFS(
 		templates.FS, "signup.gohtml", "tailwind.gohtml",
 	))
