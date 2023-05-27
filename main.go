@@ -46,6 +46,7 @@ func main() {
 		templates.FS, "signin.gohtml", "tailwind.gohtml",
 	))
 	r.Get("/signin", usersC.SignIn)
+	r.Post("/signin", usersC.ProcessSignIn)
 	r.Get("/signup", usersC.New)
 	r.Post("/users", usersC.Create)
 
