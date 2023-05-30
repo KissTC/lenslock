@@ -54,6 +54,13 @@ func (u Users) ProcessSignIn(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		fmt.Println(err)
 		http.Error(w, "something went wrong", http.StatusInternalServerError)
+		return
 	}
+	cookie := http.Cookie{
+		Name:  "email",
+		Value: user.Email,
+		Path:  "/",
+	}
+	http.SetCookie(w, &cookie)
 	fmt.Fprintf(w, "User authenticated %v", user)
 }
