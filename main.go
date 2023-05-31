@@ -49,6 +49,7 @@ func main() {
 	r.Post("/signin", usersC.ProcessSignIn)
 	r.Get("/signup", usersC.New)
 	r.Post("/users", usersC.Create)
+	r.Get("/users/me", usersC.CurrentUser)
 
 	// r.Use(middleware.Logger)
 	r.NotFound(func(w http.ResponseWriter, r *http.Request) {
