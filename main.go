@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"github.com/gorilla/csrf"
 	"github.com/kisstc/lenslock/controllers"
 	"github.com/kisstc/lenslock/models"
 	"github.com/kisstc/lenslock/templates"
@@ -56,5 +57,6 @@ func main() {
 		http.Error(w, "Page not Found", http.StatusNotFound)
 	})
 	fmt.Println("Starting the server on 3000...")
+	csrf.Protect()
 	http.ListenAndServe(":3000", r)
 }
